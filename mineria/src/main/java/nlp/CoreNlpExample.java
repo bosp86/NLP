@@ -24,7 +24,7 @@ public class CoreNlpExample {
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
         // read some text in the text variable
-        String text = "Peru has won the war ten years ago";
+        String text = "I really like to eat burritos at night while I watch tv";
 
         // create an empty Annotation just with the given text
         Annotation document = new Annotation(text);
