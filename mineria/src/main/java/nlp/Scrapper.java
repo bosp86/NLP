@@ -2,7 +2,6 @@ package nlp;
 
 import java.io.IOException;
 
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
@@ -13,7 +12,7 @@ public class Scrapper {
 
     public static void main(String[] args) throws IOException {
 
-        final Document document = Jsoup.connect("https://www.imdb.com/chart/top").get();
+        final Document document = ScrapperService.name();
 
         for (Element row : document.select("table.chart.full-width tr")) {
             if (row != null) {
