@@ -18,6 +18,7 @@ public class MovieExtractor {
 	 * 
 	 * https://towardsdatascience.com/a-practitioners-guide-to-natural-language-processing-part-i-processing-understanding-text-9f4abfd13e72
 	 * https://stackoverflow.com/questions/18439795/nlp-machine-learning-text-comparison
+	 * https://towardsdatascience.com/overview-of-text-similarity-metrics-3397c4601f50
 	 * 
 	 */
 	
