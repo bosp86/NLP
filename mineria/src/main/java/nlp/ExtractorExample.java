@@ -1,4 +1,4 @@
-package maestria;
+package nlp;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,11 +11,11 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import java.util.List;
 
-public class Extractor {
+public class ExtractorExample {
     private HashSet<String> links;
     private List<List<String>> articles;
 
-    public Extractor() {
+    public ExtractorExample() {
         links = new HashSet<>();
         articles = new ArrayList<>();
     }
@@ -92,7 +92,7 @@ public class Extractor {
     }
 
     public static void main(String[] args) {
-        Extractor bwc = new Extractor();
+        ExtractorExample bwc = new ExtractorExample();
         bwc.getPageLinks("http://www.mkyong.com");
         System.out.println("Before get articles");
         bwc.getArticles();

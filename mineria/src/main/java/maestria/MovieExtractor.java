@@ -22,7 +22,6 @@ public class MovieExtractor {
 	 * 
 	 */
 	
-	
 	public static void main(String[] args) throws Exception {
 
 		// Parameters
@@ -94,7 +93,7 @@ public class MovieExtractor {
 			writer.append("\"Genre\"\t");
 			writer.append("\"Rating\"\t");
 			writer.append("\"Link\"\t");
-			writer.append("\"Date\"\t");
+			writer.append("\"Date\"");
 			writer.append("\n");
 			
 			File f = new File(filename);
@@ -112,7 +111,7 @@ public class MovieExtractor {
 					writer.append("\""+a.getGenre()+"\"\t");
 					writer.append("\""+a.getRating()+"\"\t");
 					writer.append("\""+a.getLink()+"\"\t");
-					writer.append("\""+a.getDate()+"\"\t");
+					writer.append("\""+a.getDate()+"\"");
 					writer.append("\n");
 				} catch (IOException e) {
 					System.err.println(e.getMessage());
