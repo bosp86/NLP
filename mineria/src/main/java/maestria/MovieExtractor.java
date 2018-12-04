@@ -29,7 +29,7 @@ public class MovieExtractor {
 
 		String movieDBDomain = "https://www.themoviedb.org";
 
-		int numberOfPages = 1;
+		int numberOfPages = 10;
 		System.out.println("Scrapping ::= " + movieDBDomain);
 		System.out.println("Scrapping initiated at " + (new Date()));
 		List<Movie> movieList = new ArrayList<Movie>();
@@ -68,7 +68,7 @@ public class MovieExtractor {
 
 		System.out.println("Movives found ::= " + movieList.size());
 		
-		writeToFile("movieDescriptionDataSet.csv", movieList);
+		writeToFile("movieDescriptionDataSet.tsv", movieList);
 	}
 
 	public static void writeToFile(String filename, List<Movie> movieList) {
@@ -76,6 +76,13 @@ public class MovieExtractor {
 		FileWriter writer;
 		try {
 			writer = new FileWriter(filename);
+			
+			writer.append("\"Title\"\t");
+			writer.append("\"Description\"\t");
+			writer.append("\"Rating\"\t");
+			writer.append("\"Link\"\t");
+			writer.append("\"Date\"\t");
+			writer.append("\n");
 			
 			File f = new File(filename);
 			System.out.println(f.getAbsolutePath());
@@ -87,8 +94,11 @@ public class MovieExtractor {
 					// save to file
 //					writer.write(temp);
 					
-					writer.append("\""+a.getTitle()+"\",");
-					writer.append("\""+a.getDescription()+"\"");
+					writer.append("\""+a.getTitle()+"\"\t");
+					writer.append("\""+a.getDescription()+"\"\t");
+					writer.append("\""+a.getRating()+"\"\t");
+					writer.append("\""+a.getLink()+"\"\t");
+					writer.append("\""+a.getDate()+"\"\t");
 					writer.append("\n");
 				} catch (IOException e) {
 					System.err.println(e.getMessage());
