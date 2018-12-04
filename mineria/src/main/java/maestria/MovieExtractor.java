@@ -29,7 +29,7 @@ public class MovieExtractor {
 
 		String movieDBDomain = "https://www.themoviedb.org";
 
-		int numberOfPages = 10;
+		int numberOfPages = 5;
 		System.out.println("Scrapping ::= " + movieDBDomain);
 		System.out.println("Scrapping initiated at " + (new Date()));
 		List<Movie> movieList = new ArrayList<Movie>();
@@ -45,13 +45,24 @@ public class MovieExtractor {
 				Elements flex = page.select(".flex");
 				Elements a = flex.select("a");
 				String title = a.attr("title");
-				String decription = page.select(".overview").text();
+				
 				String score = page.select(".user_score_chart").attr("data-percent");
 				String link = a.attr("href");
 				String date = flex.select("span").text();
 
 				Thread.sleep(50);
-//				document = Jsoup.connect(movieDBDomain + link).get();
+				document = Jsoup.connect(movieDBDomain + link).get();
+				
+				Elements geners =  document.select(".genres.right_column");
+				
+				String genreFirst = "[NULL]";
+				if(geners.select("li").isEmpty() == false)
+				{
+					genreFirst = geners.select("li").get(0).text();
+				}
+				
+				String decription = document.select(".overview").select("p").text();
+				
 
 				Movie movie = new Movie();
 				movie.setTitle(title);
@@ -59,6 +70,7 @@ public class MovieExtractor {
 				movie.setRating(score);
 				movie.setLink(link);
 				movie.setDate(date);
+				movie.setGenre(genreFirst);
 
 				movieList.add(movie);
 			}
@@ -79,6 +91,7 @@ public class MovieExtractor {
 			
 			writer.append("\"Title\"\t");
 			writer.append("\"Description\"\t");
+			writer.append("\"Genre\"\t");
 			writer.append("\"Rating\"\t");
 			writer.append("\"Link\"\t");
 			writer.append("\"Date\"\t");
@@ -96,6 +109,7 @@ public class MovieExtractor {
 					
 					writer.append("\""+a.getTitle()+"\"\t");
 					writer.append("\""+a.getDescription()+"\"\t");
+					writer.append("\""+a.getGenre()+"\"\t");
 					writer.append("\""+a.getRating()+"\"\t");
 					writer.append("\""+a.getLink()+"\"\t");
 					writer.append("\""+a.getDate()+"\"\t");

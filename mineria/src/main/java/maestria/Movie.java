@@ -10,6 +10,7 @@ public class Movie {
 	private String rating;
 	private String date;
 	private String link;
+	private String genre;
 
 	public String toString() {
 		return "title ::= [" + this.title + "], rating ::= [" + this.rating + "], date ::= [" + this.date
