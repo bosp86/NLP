@@ -14,14 +14,15 @@ import org.jsoup.select.Elements;
 
 public class MovieExtractor {
 
-	/** References
+	/**
+	 * References
 	 * 
 	 * https://towardsdatascience.com/a-practitioners-guide-to-natural-language-processing-part-i-processing-understanding-text-9f4abfd13e72
 	 * https://stackoverflow.com/questions/18439795/nlp-machine-learning-text-comparison
 	 * https://towardsdatascience.com/overview-of-text-similarity-metrics-3397c4601f50
 	 * 
 	 */
-	
+
 	public static void main(String[] args) throws Exception {
 
 		// Parameters
@@ -44,24 +45,22 @@ public class MovieExtractor {
 				Elements flex = page.select(".flex");
 				Elements a = flex.select("a");
 				String title = a.attr("title");
-				
+
 				String score = page.select(".user_score_chart").attr("data-percent");
 				String link = a.attr("href");
 				String date = flex.select("span").text();
 
 				Thread.sleep(50);
 				document = Jsoup.connect(movieDBDomain + link).get();
-				
-				Elements geners =  document.select(".genres.right_column");
-				
+
+				Elements geners = document.select(".genres.right_column");
+
 				String genreFirst = "[NULL]";
-				if(geners.select("li").isEmpty() == false)
-				{
+				if (geners.select("li").isEmpty() == false) {
 					genreFirst = geners.select("li").get(0).text();
 				}
-				
+
 				String decription = document.select(".overview").select("p").text();
-				
 
 				Movie movie = new Movie();
 				movie.setTitle(title);
@@ -78,7 +77,7 @@ public class MovieExtractor {
 		System.out.println("Scrapping process took ::= [" + (System.currentTimeMillis() - init) + " ms]");
 
 		System.out.println("Movives found ::= " + movieList.size());
-		
+
 		writeToFile("movieDescriptionDataSet.tsv", movieList);
 	}
 
@@ -86,8 +85,14 @@ public class MovieExtractor {
 		System.out.println("Init Writer");
 		FileWriter writer;
 		try {
-			writer = new FileWriter(filename);
-			
+			String fullPathName = new File(".").getCanonicalPath() + System.getProperty("file.separator") + "src"
+					+ System.getProperty("file.separator") + "main" +
+
+					System.getProperty("file.separator") + "resources" + System.getProperty("file.separator")
+					+ filename;
+			System.out.println(" fullPathName :: = " + fullPathName);
+			writer = new FileWriter(fullPathName);
+
 			writer.append("\"Title\"\t");
 			writer.append("\"Description\"\t");
 			writer.append("\"Genre\"\t");
@@ -95,29 +100,30 @@ public class MovieExtractor {
 			writer.append("\"Link\"\t");
 			writer.append("\"Date\"");
 			writer.append("\n");
-			
+
 			File f = new File(filename);
 			System.out.println(f.getAbsolutePath());
 			movieList.forEach(a -> {
 				try {
-//					String temp = "- Title: " + a.getTitle() + " (link: " + a.getLink() + ")\n";
+					// String temp = "- Title: " + a.getTitle() + " (link: " +
+					// a.getLink() + ")\n";
 					// display to console
-//					System.out.println(temp);
+					// System.out.println(temp);
 					// save to file
-//					writer.write(temp);
-					
-					writer.append("\""+a.getTitle()+"\"\t");
-					writer.append("\""+a.getDescription()+"\"\t");
-					writer.append("\""+a.getGenre()+"\"\t");
-					writer.append("\""+a.getRating()+"\"\t");
-					writer.append("\""+a.getLink()+"\"\t");
-					writer.append("\""+a.getDate()+"\"");
+					// writer.write(temp);
+
+					writer.append("\"" + a.getTitle() + "\"\t");
+					writer.append("\"" + a.getDescription() + "\"\t");
+					writer.append("\"" + a.getGenre() + "\"\t");
+					writer.append("\"" + a.getRating() + "\"\t");
+					writer.append("\"" + a.getLink() + "\"\t");
+					writer.append("\"" + a.getDate() + "\"");
 					writer.append("\n");
 				} catch (IOException e) {
 					System.err.println(e.getMessage());
 				}
 			});
-			
+
 			writer.close();
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
