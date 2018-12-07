@@ -2,15 +2,12 @@ from contractions import CONTRACTION_MAP
 import re
 import nltk
 
-# nltk.download('punkt')
+#nltk.download('punkt')
 import string
 from nltk.stem import WordNetLemmatizer
-from HTMLParser import HTMLParser
+from html.parser import HTMLParser
 import unicodedata
 
-import sys
-reload(sys)
-sys.setdefaultencoding('utf8')
 
 stopword_list = nltk.corpus.stopwords.words('english')
 stopword_list = stopword_list + ['mr', 'mrs', 'come', 'go', 'get',

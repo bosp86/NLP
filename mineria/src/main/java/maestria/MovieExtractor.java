@@ -14,14 +14,6 @@ import org.jsoup.select.Elements;
 
 public class MovieExtractor {
 
-	/**
-	 * References
-	 * 
-	 * https://towardsdatascience.com/a-practitioners-guide-to-natural-language-processing-part-i-processing-understanding-text-9f4abfd13e72
-	 * https://stackoverflow.com/questions/18439795/nlp-machine-learning-text-comparison
-	 * https://towardsdatascience.com/overview-of-text-similarity-metrics-3397c4601f50
-	 * 
-	 */
 
 	public static void main(String[] args) throws Exception {
 
@@ -80,6 +72,39 @@ public class MovieExtractor {
 
 		writeToFile("movieDescriptionDataSet.tsv", movieList);
 	}
+	
+	public static String createFileWithHeaders(String filename) {
+		System.out.println("Init Writer");
+		FileWriter writer;
+		String fullPathName = null;
+		try {
+			fullPathName = new File(".").getCanonicalPath() + System.getProperty("file.separator") + "src"
+					+ System.getProperty("file.separator") + "main" +
+
+					System.getProperty("file.separator") + "resources" + System.getProperty("file.separator")
+					+ filename;
+			System.out.println(" fullPathName :: = " + fullPathName);
+			writer = new FileWriter(fullPathName);
+
+			writer.append("\"Title\"\t");
+			writer.append("\"Description\"\t");
+			writer.append("\"Genre\"\t");
+			writer.append("\"Rating\"\t");
+			writer.append("\"Link\"\t");
+			writer.append("\"Date\"");
+			writer.append("\n");
+
+			File f = new File(filename);
+			System.out.println(f.getAbsolutePath());
+
+			writer.close();
+		} catch (IOException e) {
+			System.err.println(e.getMessage());
+		}
+		
+		return fullPathName;
+	}
+	
 
 	public static void writeToFile(String filename, List<Movie> movieList) {
 		System.out.println("Init Writer");
