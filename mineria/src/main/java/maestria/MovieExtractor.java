@@ -21,17 +21,23 @@ public class MovieExtractor {
 
 		String movieDBDomain = "https://www.themoviedb.org";
 
-		int numberOfPages = 5;
+		int numberOfPages = 10;
 		System.out.println("Scrapping ::= " + movieDBDomain);
 		System.out.println("Scrapping initiated at " + (new Date()));
-		List<Movie> movieList = new ArrayList<Movie>();
+		
 		long init = System.currentTimeMillis();
+		
+		
+		
+		String fullPathName = createFileWithHeaders("movieDescriptionDataSet.tsv");
+		
+		
 		for (int i = 1; i <= numberOfPages; i++) {
 			Document document = Jsoup.connect(movieDBDomain + "/movie?page=" + i).get();
 			System.out.println("Obtained content from page(" + i + ")");
 
 			Elements overviewDiv = document.select(".item.poster.card");
-
+			List<Movie> movieList = new ArrayList<Movie>();
 			for (Element page : overviewDiv) {
 
 				Elements flex = page.select(".flex");
@@ -45,32 +51,51 @@ public class MovieExtractor {
 				Thread.sleep(50);
 				document = Jsoup.connect(movieDBDomain + link).get();
 
-				Elements geners = document.select(".genres.right_column");
+				Elements geners = document.select(".genres.right_column").select("li");
 
-				String genreFirst = "[NULL]";
-				if (geners.select("li").isEmpty() == false) {
-					genreFirst = geners.select("li").get(0).text();
+				String genresStr = "";
+				
+				if (geners.isEmpty() == false) {
+					
+					for(Element genre : geners)
+					{
+						
+						if( genre.text() != null && !"".equals(genre.text().trim()))
+						{
+							genresStr += genre.text().toUpperCase() + ",";
+						}
+					}
+					
 				}
 
 				String decription = document.select(".overview").select("p").text();
-
-				Movie movie = new Movie();
-				movie.setTitle(title);
-				movie.setDescription(decription);
-				movie.setRating(score);
-				movie.setLink(link);
-				movie.setDate(date);
-				movie.setGenre(genreFirst);
-
-				movieList.add(movie);
+				
+				if((!"".equals(genresStr.trim())) &&  decription != null && (!"".equals(decription.trim())))
+				{
+					Movie movie = new Movie();
+					movie.setTitle(title);
+					movie.setDescription(decription);
+					movie.setRating(score);
+					movie.setLink(link);
+					movie.setDate(date);
+					movie.setGenre(genresStr);
+	
+					movieList.add(movie);
+				}
+				
 			}
+			
+			System.out.println("Writing ["+movieList.size() +"] entries to file from page: (" + i + ")");
+			addToFile(fullPathName, movieList);
+			
+			movieList = null;
 		}
+		int seconds = (int)(((System.currentTimeMillis() - init) / 1000) % 60);
+		System.out.println("Scrapping process took ::= [" + seconds + " seconds]");
 
-		System.out.println("Scrapping process took ::= [" + (System.currentTimeMillis() - init) + " ms]");
+//		System.out.println("Movives found ::= " + movieList.size());
 
-		System.out.println("Movives found ::= " + movieList.size());
-
-		writeToFile("movieDescriptionDataSet.tsv", movieList);
+		
 	}
 	
 	public static String createFileWithHeaders(String filename) {
@@ -106,28 +131,12 @@ public class MovieExtractor {
 	}
 	
 
-	public static void writeToFile(String filename, List<Movie> movieList) {
+	public static void addToFile(String fullPathName, List<Movie> movieList) {
 		System.out.println("Init Writer");
 		FileWriter writer;
 		try {
-			String fullPathName = new File(".").getCanonicalPath() + System.getProperty("file.separator") + "src"
-					+ System.getProperty("file.separator") + "main" +
+			writer = new FileWriter(fullPathName, true);
 
-					System.getProperty("file.separator") + "resources" + System.getProperty("file.separator")
-					+ filename;
-			System.out.println(" fullPathName :: = " + fullPathName);
-			writer = new FileWriter(fullPathName);
-
-			writer.append("\"Title\"\t");
-			writer.append("\"Description\"\t");
-			writer.append("\"Genre\"\t");
-			writer.append("\"Rating\"\t");
-			writer.append("\"Link\"\t");
-			writer.append("\"Date\"");
-			writer.append("\n");
-
-			File f = new File(filename);
-			System.out.println(f.getAbsolutePath());
 			movieList.forEach(a -> {
 				try {
 					// String temp = "- Title: " + a.getTitle() + " (link: " +
