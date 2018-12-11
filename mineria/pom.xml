@@ -9,42 +9,17 @@
 	<version>1.0</version>
 	<packaging>jar</packaging>
 
-	<name>Spring Boot Blank Project (from https://github.com/making/spring-boot-blank)</name>
-
-
-
+	<name></name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<start-class>maestria.App</start-class>
 		<java.version>1.8</java.version>
-		<jetty.version>9.1.0.v20131115</jetty.version>
-		<servlet-api.version>3.1.0</servlet-api.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 		<lombok.version>1.14.8</lombok.version>
 		<log4jdbc.log4j2.version>1.16</log4jdbc.log4j2.version>
-		<rest.assured.version>2.3.3</rest.assured.version>
 	</properties>
 
 	<dependencies>
-
-
-		<dependency>
-			<groupId>edu.stanford.nlp</groupId>
-			<artifactId>stanford-corenlp</artifactId>
-			<version>3.2.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>edu.stanford.nlp</groupId>
-			<artifactId>stanford-corenlp</artifactId>
-			<version>3.2.0</version>
-			<classifier>models</classifier>
-		</dependency>
-
-		<dependency>
-			<groupId>edu.stanford.nlp</groupId>
-			<artifactId>stanford-corenlp</artifactId>
-			<version>3.2.0</version>
-		</dependency>
 
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -59,16 +34,4 @@
 		</dependency>
 
 	</dependencies>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>2.3</version>
-				<configuration>
-					<failOnMissingWebXml>false</failOnMissingWebXml>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 </project>

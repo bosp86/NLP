@@ -1,4 +1,9 @@
-package maestria;
+package crawler;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import lombok.Data;
 
@@ -17,4 +22,13 @@ public class Movie {
 				+ "], link ::= [ " + this.link + "] \n description ::= [" + this.description + "]";
 	}
 
+	
+	public static void main(String[] args) throws IOException
+	{
+		System.out.println( new File(".").getCanonicalPath());
+		
+		Path path = Paths.get(new File(".").getCanonicalPath());
+		
+		System.out.println(path.getParent().toString());
+	}
 }

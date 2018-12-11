@@ -1,11 +1,13 @@
-package maestria;
+package crawler;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -14,27 +16,27 @@ import org.jsoup.select.Elements;
 
 public class MovieExtractor {
 
+	/**
+	 * CRAWLER PARAMETERS
+	 */
+
+	private static final int NUMBER_OF_PAGES = 20;
+	private static final boolean CREATE_NEW_FILE = true;
 
 	public static void main(String[] args) throws Exception {
 
-		// Parameters
-
 		String movieDBDomain = "https://www.themoviedb.org";
 
-		int numberOfPages = 10;
 		System.out.println("Scrapping ::= " + movieDBDomain);
 		System.out.println("Scrapping initiated at " + (new Date()));
-		
+
 		long init = System.currentTimeMillis();
-		
-		
-		
+
 		String fullPathName = createFileWithHeaders("movieDescriptionDataSet.tsv");
-		
-		
-		for (int i = 1; i <= numberOfPages; i++) {
+		long scrappedPages  = 0;
+		for (int i = 1; i <= NUMBER_OF_PAGES; i++) {
 			Document document = Jsoup.connect(movieDBDomain + "/movie?page=" + i).get();
-			System.out.println("Obtained content from page(" + i + ")");
+			scrappedPages ++;
 
 			Elements overviewDiv = document.select(".item.poster.card");
 			List<Movie> movieList = new ArrayList<Movie>();
@@ -50,28 +52,26 @@ public class MovieExtractor {
 
 				Thread.sleep(50);
 				document = Jsoup.connect(movieDBDomain + link).get();
-
+				scrappedPages ++;
 				Elements geners = document.select(".genres.right_column").select("li");
 
 				String genresStr = "";
-				
+
 				if (geners.isEmpty() == false) {
-					
-					for(Element genre : geners)
-					{
-						
-						if( genre.text() != null && !"".equals(genre.text().trim()))
-						{
-							genresStr += genre.text().toUpperCase() + ",";
+					int size = 1;
+					for (Element genre : geners) {
+
+						if (genre.text() != null && !"".equals(genre.text().trim())) {
+							genresStr += genre.text().toUpperCase() + (size == geners.size()?"":",");
 						}
+						size++;
 					}
-					
+
 				}
 
 				String decription = document.select(".overview").select("p").text();
-				
-				if((!"".equals(genresStr.trim())) &&  decription != null && (!"".equals(decription.trim())))
-				{
+
+				if ((!"".equals(genresStr.trim())) && decription != null && (!"".equals(decription.trim()))) {
 					Movie movie = new Movie();
 					movie.setTitle(title);
 					movie.setDescription(decription);
@@ -79,36 +79,39 @@ public class MovieExtractor {
 					movie.setLink(link);
 					movie.setDate(date);
 					movie.setGenre(genresStr);
-	
+
 					movieList.add(movie);
 				}
-				
+
 			}
-			
-			System.out.println("Writing ["+movieList.size() +"] entries to file from page: (" + i + ")");
-			addToFile(fullPathName, movieList);
-			
+
+			System.out.println("\nWriting [" + movieList.size() + "] entries to file");
+			if (movieList.size() > 0) {
+				long fileSize = addToFile(fullPathName, movieList);
+				System.out.println("File size -> " + fileSize / 1024 + " KB , Scrapped pages -> " + scrappedPages);
+			}
+
 			movieList = null;
 		}
-		int seconds = (int)(((System.currentTimeMillis() - init) / 1000) % 60);
-		System.out.println("Scrapping process took ::= [" + seconds + " seconds]");
-
-//		System.out.println("Movives found ::= " + movieList.size());
-
+		
+		long millis = System.currentTimeMillis() - init;
+		System.out.println("\nScrapping process took -> [" + String.format("%02d min, %02d sec", 
+			    TimeUnit.MILLISECONDS.toMinutes(millis),
+			    TimeUnit.MILLISECONDS.toSeconds(millis) - 
+			    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))
+			) + "]");
+		System.out.println("Number of pages scrapped -> [" + scrappedPages+"]");
 		
 	}
-	
+
 	public static String createFileWithHeaders(String filename) {
-		System.out.println("Init Writer");
 		FileWriter writer;
 		String fullPathName = null;
 		try {
-			fullPathName = new File(".").getCanonicalPath() + System.getProperty("file.separator") + "src"
-					+ System.getProperty("file.separator") + "main" +
-
-					System.getProperty("file.separator") + "resources" + System.getProperty("file.separator")
-					+ filename;
-			System.out.println(" fullPathName :: = " + fullPathName);
+			fullPathName = Paths.get(new File(".").getCanonicalPath()).getParent().toString()
+					+ System.getProperty("file.separator") + "notebooks" + System.getProperty("file.separator")
+					+ "dataset" + System.getProperty("file.separator") + filename;
+			
 			writer = new FileWriter(fullPathName);
 
 			writer.append("\"Title\"\t");
@@ -119,33 +122,22 @@ public class MovieExtractor {
 			writer.append("\"Date\"");
 			writer.append("\n");
 
-			File f = new File(filename);
-			System.out.println(f.getAbsolutePath());
-
+			System.out.println("File created at -> " + fullPathName);
 			writer.close();
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
 		}
-		
+
 		return fullPathName;
 	}
-	
 
-	public static void addToFile(String fullPathName, List<Movie> movieList) {
-		System.out.println("Init Writer");
+	public static long addToFile(String fullPathName, List<Movie> movieList) {
 		FileWriter writer;
 		try {
 			writer = new FileWriter(fullPathName, true);
 
 			movieList.forEach(a -> {
 				try {
-					// String temp = "- Title: " + a.getTitle() + " (link: " +
-					// a.getLink() + ")\n";
-					// display to console
-					// System.out.println(temp);
-					// save to file
-					// writer.write(temp);
-
 					writer.append("\"" + a.getTitle() + "\"\t");
 					writer.append("\"" + a.getDescription() + "\"\t");
 					writer.append("\"" + a.getGenre() + "\"\t");
@@ -157,11 +149,16 @@ public class MovieExtractor {
 					System.err.println(e.getMessage());
 				}
 			});
-
+			
 			writer.close();
+			
+			
+			
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
 		}
+		
+		return new File(fullPathName).length();
 	}
 
 }
