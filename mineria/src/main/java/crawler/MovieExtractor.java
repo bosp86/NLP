@@ -20,7 +20,7 @@ public class MovieExtractor {
 	 * CRAWLER PARAMETERS
 	 */
 
-	private static final int NUMBER_OF_PAGES = 20;
+	private static final int NUMBER_OF_PAGES = 150;
 	private static final boolean CREATE_NEW_FILE = true;
 
 	public static void main(String[] args) throws Exception {

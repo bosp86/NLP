@@ -109,8 +109,12 @@ def normalize_corpus(corpus, lemmatize=True,
                      tokenize=False):
     
     normalized_corpus = []    
+    num_words_init = [] 
+    num_words_final = []
+
     for text in corpus:
 
+        num_words_init.append(len(text.split()))
         #UNESCPAE
         text = html_parser.unescape(text)
 
@@ -138,8 +142,10 @@ def normalize_corpus(corpus, lemmatize=True,
             normalized_corpus.append(text)
         else:
             normalized_corpus.append(text)
-            
-    return normalized_corpus
+
+        num_words_final.append(len(text.split()))
+
+    return normalized_corpus , num_words_init, num_words_final
 
 
 def parse_document(document):
@@ -154,5 +160,3 @@ def parse_document(document):
     sentences = nltk.sent_tokenize(document)
     sentences = [sentence.strip() for sentence in sentences]
     return sentences
-    
-    
